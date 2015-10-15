@@ -1,0 +1,260 @@
+%% -*- Mode: LaTeX -*-
+%%
+%% bind-config.tex
+%% Created Mon Sep 25 09:26:01 AKDT 2006
+%% Copyright (C) 2006 by Raymond E. Marcil
+%% 
+%% This file is part of ImageGallery
+%%
+%% ImageGallery is free software; you can redistribute it and/or modify
+%% it under the terms of the GNU General Public License as published by
+%% the Free Software Foundation; either version 2 of the License, or
+%% (at your option) any later version.
+%%
+%% ImageGallery is distributed in the hope that it will be useful,
+%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%% GNU General Public License for more details.
+%%
+%% You should have received a copy of the GNU General Public License
+%% along with ImageGallery1; if not, write to the Free Software
+%% Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+%%
+%% Bind Configuration
+%%
+
+
+  %%
+%%%%%% Preamble.
+  %%
+
+%% Specify DVIPS driver used by things like hyperref
+\documentclass[12pt,letterpaper,dvips]{article}
+
+\usepackage{rcs}
+\usepackage{fullpage}
+\usepackage{fancyvrb} 
+\usepackage{graphicx}
+\usepackage{figsize}
+\usepackage{calc}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage[first,bottomafter]{draftcopy}
+\usepackage[numbib]{tocbibind}
+\usepackage{amssymb}              %% AMS Symbols, used for \checkmark
+\usepackage{multicol}
+
+
+%% Hyperref package for embedding URLs
+%% for clickable links in PDFs, 
+%% also specify PDF attributes here.
+\usepackage[
+colorlinks=false,
+hyperindex=false,
+urlcolor=blue,
+pdfauthor={Raymond E. Marcil},
+pdftitle={Iconcache},
+pdfcreator={ps2pdf},
+pdfsubject={Bind Configuration},
+pdfkeywords={Bind, nameserver, configuration}
+]{hyperref}
+
+%% Extract RCS metadata for use elsewhere.
+%% Jason figured this out, very cool.
+\RCS $Revision: 554 $
+\RCS $Date: 2006-11-24 09:59:03 -0900 (Fri, 24 Nov 2006) $
+
+  %%
+%%%%%% Customization.
+  %%
+
+% On letter paper with 10pt font the Verbatim environment has 65 columns.
+% With 12pt font the environment has 62 columns.  Exceeding this will exceed
+% the frame and will look ugly.  YHBW.  HAND.
+\RecustomVerbatimEnvironment{Verbatim}{Verbatim}{frame=single}
+
+\renewenvironment{description}
+                 {\list{}{\labelwidth 0pt \iteminden-\leftmargin
+                          \let\labelsep\hsize
+                          \let\makelabel\descriptionlabel}}
+                 {\endlist}
+\renewcommand*\descriptionlabel[1]{\hspace\labelsep\sffamily\bfseries #1}
+
+
+  %%
+%%%%%% Commands.
+  %%
+
+\newcommand{\FIXME}[1]{\textsf{[FIXME: #1]}}
+\newcommand{\cmd}[1]{\texttt{#1}}
+
+
+%% Squeeze space above/below captions
+\setlength{\abovecaptionskip}{4pt}   % 0.5cm as an example
+\setlength{\belowcaptionskip}{4pt}   % 0.5cm as an example
+
+
+%% Tex really adds a lot of whitespace to itemized 
+%% lists so define a new command itemize* with a 
+%% lot less whitespace.  Found this in the British
+%% Tex faq.
+\newenvironment{itemize*}%
+  {\begin{itemize}%
+    \setlength{\itemsep}{0pt}%
+    \setlength{\parsep}{0pt}}%
+  {\end{itemize}}
+
+%% Squeeze space
+\renewcommand\floatpagefraction{.9}
+\renewcommand\topfraction{.9}
+\renewcommand\bottomfraction{.9}
+\renewcommand\textfraction{.1}   
+\setcounter{totalnumber}{50}
+\setcounter{topnumber}{50}
+\setcounter{bottomnumber}{50}
+
+
+  %%
+%%%%%% Document.
+  %%
+
+\title{Bind\\
+       Configuration}
+
+\author{Raymond E. Marcil\\
+        \texttt{marcilr@rockhounding.net}}
+
+% Set date to RCS revision date
+\date{Revision \RCSRevision
+      \hspace{2pt}
+      (\RCSDate)}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+     This document contains ideas and design for
+     iconcache. My long thought about web gallery
+     for images.
+\end{abstract}
+
+\vspace{2.0in}
+
+%% Draw DNR logo and address at bottom of page
+%%\begin{figure}[h]
+%%        \hspace{0.32in}
+%%        \SetFigLayout{1}{1}
+%%        \begin{minipage}[b]{0.16\figwidth}
+%%                \includegraphics[width=\textwidth]{dnr_bwlogo.eps}
+%%        \end{minipage}
+%%        \hspace{5pt}
+%%        \begin{minipage}[b]{\figwidth}
+%%                \bf{Alaska Department of Natural Resources}\\
+%%                \small{\sf{Division of Support Services\\
+%%                Land Records Information Section\\
+%%                550 W. 7th Ave. Suite 706\\
+%%                Anchorage, Alaska 99501}}
+%%        \end{minipage}
+%%\end{figure}
+
+
+\newpage
+
+
+\tableofcontents
+
+%%\newpage
+%%\listoffigures
+%%\listoftables
+
+\newpage
+
+
+%% ===================== Introduction ======================
+%% ===================== Introduction ======================
+
+\newpage
+\section{Introduction}
+Introduction...
+
+
+%% ===================== Configuring Apache =====================
+%% ===================== Configuring Apache =====================
+\subsection{Configuring Apache}
+
+The best route to configure Apache to use the ImageGallery
+servlet is the use of the \cmd{mod\_jk} module. This
+requires configuring \texttt{conf/workers.properties}, 
+see Figure \ref{fig:workers.properties} and modifying 
+the \texttt{http.conf}.
+
+\begin{center}
+\begin{figure}[htb]
+\begin{Verbatim}
+  worker.list=worker1
+  # ----------------
+  # First worker
+  # ----------------
+  worker.worker1.port=8009
+  worker.worker1.host=cuprite.dnr.state.ak.us  <== The server hostname
+  worker.worker1.type=ajp13
+  # Load balance factor
+  worker.worker1.lbfactor=1
+
+  # ----------------------
+  # Load Balancer worker
+  # ----------------------
+  worker.loadbalancer.type=lb
+  worker.loadbalancer.balanced_workers=worker1
+\end{Verbatim}
+\caption{\texttt{conf/workers.properties} for \cmd{mod\_jk}}
+\label{fig:workers.properties}
+\end{figure}
+\end{center}
+
+\noindent Figure \ref{fig:httpd.conf} shows the \cmd{mod\_jk}
+configuration in \texttt{http.conf}.
+
+\begin{center}
+\begin{figure}[htb]
+\begin{Verbatim}
+  LoadModule jk_module modules/mod_jk.so
+  <IfModule mod_jk.c>
+        
+  # Location of the worker file
+  JkWorkersFile conf/workers.properties
+
+  # Location of log file
+  JkLogFile logs/mod_jk.log
+
+  # Log level: debug, info, error or emerg
+  JkLogLevel info
+  JkLogStampFormat "[%a %b %d %H:%M:%S %Y] "
+
+  JkMount /Iconcache* worker1
+  JkMount /*iconcache.xml worker1
+  </IfModule>
+\end{Verbatim}
+\caption{\texttt{conf/httpd.conf configuration}}
+\label{fig:httpd.conf}
+\end{figure}
+\end{center}
+
+
+%% ======================== Appendix =============================
+%% ======================== Appendix =============================
+
+\clearpage
+\newpage
+\section*{Appendix}
+
+
+\end{document}
+
+%% Local Variables:
+%% fill-column: 78
+%% mode: auto-fill
+%% compile-command: "make"
+%% End:
+
