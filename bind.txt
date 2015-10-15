@@ -1,0 +1,8 @@
+bind.txt
+Created Mon Sep 25 09:16:01 AKDT 2006
+by Raymond E. Marcil
+
+
+I've been working on getting bind up and going in a chroot jail on vegemite
+since magnetite ate itself with a bad drive.  Figured starting a location on
+documentation for the bind nameserver is a good idea.
